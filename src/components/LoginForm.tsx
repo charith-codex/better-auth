@@ -5,8 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { signIn } from '@/lib/auth-client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
@@ -24,16 +29,23 @@ export default function LoginForm() {
         password,
       },
       {
-        onRequest: () => {},
-        onResponse: () => {},
+        onRequest: () => {
+          setIsPending(true);
+        },
+        onResponse: () => {
+          setIsPending(false);
+        },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-        onSuccess: () => {},
+        onSuccess: () => {
+          toast.success('Login successful. Good to have you back.');
+          router.push('/profile');
+        },
       }
     );
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="max-w-sm w-full space-y-4">
       <div className="space-y-2">
@@ -45,7 +57,7 @@ export default function LoginForm() {
         <Input type="password" id="password" name="password" />
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full" disabled={isPending}>
         Login
       </Button>
     </form>

@@ -8,6 +8,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    minPasswordLength: 3
+    minPasswordLength: 3,
+    autoSignIn: false,
   },
 });
